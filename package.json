@@ -1,0 +1,17 @@
+{
+  "name": "nsubstitute.verifyall",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "zarro test-dotnet",
+    "release": "cross-env BUILD_CONFIGURATION=Release zarro release",
+    "release-beta": "cross-env PACK_INCREMENT_VERSION=1 VERSION_INCREMENT_STRATEGY=prerelease BUILD_CONFIGURATION=Release zarro release",
+    "zarro": "zarro"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "zarro": "^1.166.0"
+  }
+}
