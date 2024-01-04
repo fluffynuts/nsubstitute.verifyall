@@ -4,14 +4,18 @@
   "description": "",
   "scripts": {
     "test": "zarro test-dotnet",
-    "release": "cross-env BUILD_CONFIGURATION=Release zarro release",
+    "prerelease": "run-p verify-up-to-date test",
+    "release": "cross-env BUILD_CONFIGURATION=Release zarro release-nuget",
+    "prerelease-beta": "run-p verify-up-to-date test",
     "release-beta": "cross-env PACK_INCREMENT_VERSION=1 VERSION_INCREMENT_STRATEGY=prerelease BUILD_CONFIGURATION=Release zarro release",
+    "verify-up-to-date": "zarro @",
     "zarro": "zarro"
   },
   "keywords": [],
   "author": "",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "zarro": "^1.166.0"
+    "typescript": "^5.3.3",
+    "zarro": "^1.166.2"
   }
 }
