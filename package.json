@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "build": "zarro @",
     "test": "zarro test-dotnet",
-    "prerelease": "run-p verify-up-to-date test",
+    "prerelease": "run-p verify-up-to-date",
     "release": "cross-env BUILD_CONFIGURATION=Release zarro release-nuget",
-    "prerelease-beta": "run-p verify-up-to-date test",
-    "release-beta": "cross-env PACK_INCREMENT_VERSION=1 VERSION_INCREMENT_STRATEGY=prerelease BUILD_CONFIGURATION=Release zarro release",
+    "prerelease-beta": "run-p verify-up-to-date",
+    "release-beta": "cross-env VERSION_INCREMENT_STRATEGY=prerelease BUILD_CONFIGURATION=Release zarro release-nuget",
     "verify-up-to-date": "zarro @",
     "zarro": "zarro"
   },

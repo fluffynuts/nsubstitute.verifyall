@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -14,9 +13,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-
   <PropertyGroup>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageId>NSubstitute.Community.VerifyAll</PackageId>
+    <PackageVersion>1.0.1-2401090905.2249732</PackageVersion>
     <Authors>Davyd McColl</Authors>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageProjectUrl>https://github.com/fluffynuts/NExpect</PackageProjectUrl>
@@ -30,15 +29,12 @@
       both as a convenience for new code as well as to make migrating code from Moq a little easier.
     </Description>
   </PropertyGroup>
-  
   <ItemGroup>
     <None Include="icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
-  
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
+    <PackageReference Include="NSubstitute" Version="5.1.0"/>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\PeanutButter\source\Utils\PeanutButter.Utils\ArrayExtensions.cs">
       <Link>Imported\ArrayExtensions.cs</Link>
@@ -89,11 +85,9 @@
       <Link>Imported\UnevenZipException.cs</Link>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="">
       <Link>README.md</Link>
     </None>
   </ItemGroup>
-
 </Project>
