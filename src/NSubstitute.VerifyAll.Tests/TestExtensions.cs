@@ -48,6 +48,47 @@ public class Tests
             .To.Throw<VerifyCallsException>();
     }
 
+    [TestFixture]
+    public class WhenSpecifyingMaxCalls
+    {
+        [Test]
+        public void ShouldPassWhenOneCallOneInvocationOneExpected()
+        {
+            // Arrange
+            var calculator = Substitute.For<ICalculator>();
+            calculator.Add(Arg.Any<int>(), Arg.Any<int>())
+                .Returns(ci => (int) ci.Args()[0] + (int) ci.Args()[1]);
+            // Act
+            calculator.Add(1, 2);
+            // Assert
+            Expect(() => calculator.VerifyAll())
+                .Not.To.Throw();
+            Expect(() => calculator.VerifyAll(1))
+                .Not.To.Throw();
+            Expect(() => calculator.VerifyAll(2))
+                .To.Throw();
+        }
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        [TestCase(-100)]
+        public void ShouldThrowForCallCountLessThanOne(
+            int callCount
+        )
+        {
+            // Arrange
+            var calculator = Substitute.For<ICalculator>();
+            calculator.Add(Arg.Any<int>(), Arg.Any<int>())
+                .Returns(ci => (int) ci.Args()[0] + (int) ci.Args()[1]);
+            // Act
+            calculator.Add(1, 2);
+            // Assert
+            Expect(() => calculator.VerifyAll(callCount))
+                .To.Throw<ArgumentException>()
+                .For("maxCallsPerInvocation");
+        }
+    }
+
     public interface ICalculator
     {
         int Add(int a, int b);

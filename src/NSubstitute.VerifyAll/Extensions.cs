@@ -21,11 +21,53 @@ public static class Extension
     /// have been called with the configured arguments, much like
     /// Moq's .VerifyAll()
     /// </summary>
-    /// <parameter name="actual"></parameter>
+    /// <parameter name="actual">The mocked service or entity to test</parameter>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static void VerifyAll<T>(
         this T actual
+    ) where T : class
+    {
+        VerifyReceivedCalls(
+            actual,
+            null
+        );
+    }
+
+    /// <summary>
+    /// Verifies that all configured calls on an NSubstitute proxy
+    /// have been called with the configured arguments, much like
+    /// Moq's .VerifyAll()
+    /// </summary>
+    /// <parameter name="actual">The mocked service or entity to test</parameter>
+    /// <parameter name="maxCallsPerInvocation">
+    /// Specifies the maximum number of times each set-up mock should have been called,
+    /// useful to ensure that services aren't being mistakenly called multiple times.
+    /// </parameter>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static void VerifyAll<T>(
+        this T actual,
+        int maxCallsPerInvocation
+    ) where T : class
+    {
+        if (maxCallsPerInvocation < 1)
+        {
+            throw new ArgumentException(
+                $"{nameof(maxCallsPerInvocation)} cannot be < 1",
+                nameof(maxCallsPerInvocation)
+            );
+        }
+
+        VerifyReceivedCalls(
+            actual,
+            maxCallsPerInvocation
+        );
+    }
+
+    private static void VerifyReceivedCalls<T>(
+        T actual,
+        int? maxCallsPerInvocation
     ) where T : class
     {
         var callSpecs = FindAllCallSpecificationsFor(actual);
@@ -38,7 +80,11 @@ public static class Extension
         }
 
         var allCalls = actual.ReceivedCalls().ToArray();
-        var missedConfiguredCalls = FindMissedConfiguredCalls(callSpecs, allCalls);
+        var missedConfiguredCalls = FindMissedConfiguredCalls(
+            callSpecs,
+            allCalls,
+            maxCallsPerInvocation
+        );
         var unconfiguredCalls = FindUnconfiguredCalls(allCalls, callSpecs);
 
         var passed = missedConfiguredCalls.IsEmpty() &&
@@ -77,13 +123,14 @@ public static class Extension
 
     private static List<CallSpec> FindMissedConfiguredCalls(
         List<CallSpec> callSpecs,
-        ICall[] allCalls
+        ICall[] allCalls,
+        int? maxCalls
     )
     {
         var missedConfiguredCalls = new List<CallSpec>();
         foreach (var spec in callSpecs)
         {
-            if (WasCalled(spec, allCalls))
+            if (WasCalled(spec, allCalls, maxCalls))
             {
                 continue;
             }
@@ -119,7 +166,8 @@ public static class Extension
 
     private static bool WasCalled(
         CallSpec callSpec,
-        ICall[] allCalls
+        ICall[] allCalls,
+        int? maxCalls
     )
     {
         var receivedCalls = allCalls.Where(
@@ -130,16 +178,18 @@ public static class Extension
             return false;
         }
 
-        var foundMatch = true;
+        var matches = 0;
         foreach (var receivedCall in receivedCalls)
         {
-            if (!ArgsMatch(callSpec, receivedCall))
+            if (ArgsMatch(callSpec, receivedCall))
             {
-                foundMatch = false;
+                matches++;
             }
         }
 
-        return foundMatch;
+        return maxCalls is null
+            ? matches > 0
+            : matches == maxCalls;
     }
 
     private static List<CallSpec> FindAllCallSpecificationsFor<T>(
